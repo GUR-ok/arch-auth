@@ -1,0 +1,50 @@
+server:
+  servlet:
+    context-path: /
+  port: ${SERVER_PORT:8000}
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      slo:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 300ms, 500ms
+      percentiles-histogram:
+        "[http.server.requests]": true
+spring:
+  application:
+    name: arch-auth
+  main:
+    banner-mode: off
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        default_schema: public
+  datasource:
+    platform: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432}/${DATABASE_NAME:postgres}?currentSchema=${DATABASE_SCHEMA:public}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/db_master_changelog.xml
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    ru.gur.arch: INFO
