@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "chart.name" . }}-deployment
+  namespace: arch-gur
   labels:
     app: {{ include "chart.name" . }}-app
 spec:
@@ -77,6 +78,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "chart.name" . }}-postgresql-deployment
+  namespace: arch-gur
 spec:
   serviceName: "postgres"
   replicas: {{ .Values.deployment.db.replicas }}
