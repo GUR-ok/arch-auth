@@ -10,6 +10,7 @@ deployment:
     image: gurok/arch_auth
     port: 8000
     replicas: 2
+    jwtsecret: secret
   db:
     type: NodePort
     image: postgres:latest

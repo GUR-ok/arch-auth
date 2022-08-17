@@ -11,3 +11,5 @@
 ---
 helm uninstall arch-auth
 kubectl delete namespace arch-gur
+
+kubectl port-forward -n arch-gur arch-auth-postgresql-deployment-0 5433:5432
