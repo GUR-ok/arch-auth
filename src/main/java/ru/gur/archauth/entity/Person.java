@@ -39,4 +39,7 @@ public class Person {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "profile_id", unique = true)
+    private UUID profileId;
 }

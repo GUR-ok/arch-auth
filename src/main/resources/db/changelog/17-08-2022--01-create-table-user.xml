@@ -10,7 +10,7 @@
             </not>
         </preConditions>
 
-        <createTable tableName="users" remarks="Заявка на открытие первого счета">
+        <createTable tableName="users" remarks="Пользователи">
             <column name="id" type="uuid" remarks="Идентификатор пользователя">
                 <constraints primaryKey="true" primaryKeyName="pk_user"/>
             </column>
@@ -26,6 +26,8 @@
             </column>
             <column name="password" type="varchar(255)" remarks="Пароль">
                 <constraints nullable="false"/>
+            </column>
+            <column name="profile_id" type="uuid" remarks="Идентификатор профиля">
             </column>
         </createTable>
     </changeSet>

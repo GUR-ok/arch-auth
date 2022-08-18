@@ -9,6 +9,9 @@
    kubectl get pods -n arch-gur
 
 ---
+Для генерации jwk:
+keytool -genkeypair -alias mytest -keyalg RSA -keypass mypass -keystore mytest.jks -storepass mypass
+---
 helm uninstall arch-auth
 kubectl delete namespace arch-gur
 
