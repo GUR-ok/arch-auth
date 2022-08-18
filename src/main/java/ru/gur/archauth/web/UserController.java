@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gur.archauth.service.AuthService;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
@@ -29,8 +30,12 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public Map<String, String> login(@Valid @RequestBody UserDto userDto) {
+    public Map<String, String> login(@Valid @RequestBody UserDto userDto, HttpServletResponse response) {
         String token = authService.login(userDto);
+
+        response.setHeader("x-auth-token", token);
+        response.setHeader("x-jwt-token", token);
+        response.setHeader("x-username", userDto.getLogin());
 
         return Collections.singletonMap("token", token);
     }

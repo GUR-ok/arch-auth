@@ -13,6 +13,7 @@ import ru.gur.archauth.exception.UserNotFoundException;
 import ru.gur.archauth.persistence.PersonRepository;
 import ru.gur.archauth.web.UserDto;
 
+import java.security.KeyPair;
 import java.util.UUID;
 
 @Service
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private final PersonRepository personRepository;
+    private final KeyPair keyPair;
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -53,12 +56,11 @@ public class AuthServiceImpl implements AuthService {
         if (!userDto.getPassword().equals(person.getPassword()))
             throw new InvalidPasswordException("Password invalid");
 
-        System.out.println("! " + secret);
-
         return Jwts.builder()
-                .setSubject(userDto.getLogin())
-                .setId(person.getId().toString())
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setIssuer("http://arch-auth-service.arch-gur")
+                .setSubject("user")
+                .claim("kid", "gur-id")
+                .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
     }
 }
