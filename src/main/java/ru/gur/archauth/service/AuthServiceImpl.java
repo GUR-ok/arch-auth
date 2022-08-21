@@ -17,6 +17,7 @@ import ru.gur.archauth.web.UserDto;
 
 import java.net.URI;
 import java.security.KeyPair;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UUID register(UserDto userDto) {
+    public Map<String, UUID> register(UserDto userDto) {
         personRepository.findByLogin(userDto.getLogin())
                 .ifPresent(u -> {
                     throw new UserExistsException("User with login " +
@@ -57,7 +58,8 @@ public class AuthServiceImpl implements AuthService {
 
         personRepository.save(person);
 
-        return person.getId();
+        return Map.of("profileId", person.getProfileId(),
+                "userId", person.getId());
     }
 
     @Override

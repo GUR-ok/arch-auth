@@ -24,9 +24,9 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public Map<String, UUID> register(@Valid @RequestBody UserDto userDto) {
-        UUID uuid = authService.register(userDto);
+        Map<String, UUID> ids = authService.register(userDto);
 
-        return Collections.singletonMap("userId", uuid);
+        return ids;
     }
 
     @PostMapping(value = "/login")
