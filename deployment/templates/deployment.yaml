@@ -27,15 +27,15 @@ spec:
             httpGet:
               port: {{ .Values.deployment.app.port }}
               path: /health
-            initialDelaySeconds: 120
-            periodSeconds: 5
+            initialDelaySeconds: 60
+            periodSeconds: 15
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               port: {{ .Values.deployment.app.port }}
               path: /health
-            initialDelaySeconds: 120
-            periodSeconds: 5
+            initialDelaySeconds: 60
+            periodSeconds: 15
           env:
             - name: SERVER_PORT
               valueFrom:
@@ -72,7 +72,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: SPRING_DATASOURCE_PASSWORD
-
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: JWT_SECRET
 ---
 apiVersion: apps/v1
 kind: StatefulSet
