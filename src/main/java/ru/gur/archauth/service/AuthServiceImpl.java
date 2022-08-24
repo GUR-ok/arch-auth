@@ -17,6 +17,11 @@ import ru.gur.archauth.web.UserDto;
 
 import java.net.URI;
 import java.security.KeyPair;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         final Person person = Person.builder()
                 .email(userDto.getEmail())
                 .login(userDto.getLogin())
+                //todo: pswd must be encrypted
                 .password(userDto.getPassword())
                 .build();
 
@@ -77,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 .claim("kid", "gur-id")
                 .claim("profileId", person.getProfileId())
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
+                .setExpiration(Date.valueOf(LocalDate.now().plus(15, ChronoUnit.MINUTES)))
                 .compact();
     }
 }
