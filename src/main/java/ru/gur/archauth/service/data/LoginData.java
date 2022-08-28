@@ -9,5 +9,5 @@ public class LoginData {
 
     String token;
 
-    String sessionId;
+    String session;
 }

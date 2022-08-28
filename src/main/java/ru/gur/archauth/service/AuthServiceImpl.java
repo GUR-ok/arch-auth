@@ -61,8 +61,8 @@ public class AuthServiceImpl implements AuthService {
 
         final RequestEntity<String> requestEntity = RequestEntity.post(profilesUri + "/profiles").body(registerRequest.getEmail());
 
-//        final UUID profileUUID = restTemplate.exchange(requestEntity, UUID.class).getBody();
-        final UUID profileUUID = UUID.randomUUID();
+        final UUID profileUUID = restTemplate.exchange(requestEntity, UUID.class).getBody();
+//        final UUID profileUUID = UUID.randomUUID();
 
         person.setProfileId(profileUUID);
 
@@ -90,28 +90,28 @@ public class AuthServiceImpl implements AuthService {
                 .setExpiration(new Date(System.currentTimeMillis() + 600000))
                 .compact();
 
-        final String sessionId = UUID.randomUUID().toString().replaceAll("-", "");
-        redisRepository.save(new Session(sessionId, token));
+        final String session = UUID.randomUUID().toString().replaceAll("-", "");
+        redisRepository.save(new Session(session, token, 36000L));
 
         return LoginData.builder()
                 .token(token)
-                .sessionId(sessionId)
+                .session(session)
                 .build();
     }
 
     @Override
-    public void logout(final String sessionId) {
-        Assert.hasText(sessionId, "sessionId must not be blank");
+    public void logout(final String session) {
+        Assert.hasText(session, "session must not be blank");
 
-        redisRepository.deleteById(sessionId);
+        redisRepository.deleteById(session);
     }
 
     @Override
-    public Boolean validateToken(final String token, final String sessionId) {
-        Assert.hasText(sessionId, "sessionId must not be blank");
+    public Boolean validateToken(final String token, final String session) {
+        Assert.hasText(session, "session must not be blank");
         Assert.hasText(token, "token must not be blank");
 
-        return redisRepository.findById(sessionId)
+        return redisRepository.findById(session)
                 .map(Session::getJwt)
                 .map(x -> Objects.equals(x, token))
                 .orElse(false);

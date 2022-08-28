@@ -9,8 +9,15 @@
    kubectl get pods -n arch-gur
 
 ---
+
 Для генерации jwk:
 keytool -genkeypair -alias mytest -keyalg RSA -keypass mypass -keystore mytest.jks -storepass mypass
+
+Для локлаьного запуска redis: docker-compose up
+
+Для установки redis manager
+winget install qishibo.AnotherRedisDesktopManager
+
 ---
 helm uninstall arch-auth
 kubectl delete namespace arch-gur

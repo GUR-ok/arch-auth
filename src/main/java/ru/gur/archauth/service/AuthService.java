@@ -13,7 +13,7 @@ public interface AuthService {
 
     LoginData login(LoginRequest loginRequest);
 
-    void logout(String sessionId);
+    void logout(String session);
 
-    Boolean validateToken(String token, String sessionId);
+    Boolean validateToken(String token, String session);
 }

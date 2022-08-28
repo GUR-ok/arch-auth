@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import java.io.Serializable;
 
@@ -18,4 +19,7 @@ public class Session implements Serializable {
     private String id;
 
     private String jwt;
+
+    @TimeToLive
+    private Long timeout;
 }

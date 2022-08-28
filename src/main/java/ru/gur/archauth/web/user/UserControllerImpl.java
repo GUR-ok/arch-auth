@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.gur.archauth.exception.UnauthorizedException;
 import ru.gur.archauth.service.AuthService;
 import ru.gur.archauth.service.data.LoginData;
 import ru.gur.archauth.web.user.request.LoginRequest;
@@ -15,6 +16,7 @@ import ru.gur.archauth.web.user.request.RegisterRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,12 +41,12 @@ public class UserControllerImpl implements UserController {
         response.setHeader("x-auth-token", loginData.getToken());
         response.setHeader("x-username", loginRequest.getLogin());
 
-        return Map.of("token", loginData.getToken(), "sessionId", loginData.getSessionId());
+        return Map.of("token", loginData.getToken(), "session", loginData.getSession());
     }
 
     @PostMapping(value = "/logout")
     public void logout(HttpServletRequest request) {
-        authService.logout(request.getHeader("sessionId"));
+        authService.logout(request.getHeader("x-auth-session"));
     }
 
     /**
@@ -55,28 +57,36 @@ public class UserControllerImpl implements UserController {
     @GetMapping(value = "/auth/istio/**")
     public void istio(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET");
-
-        if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("sessionId"))) {
-            response.setHeader("x-auth-token", request.getHeader("x-auth-token"));
-            log.info("Token: is active!");
-        } else {
-            log.info("Token: is revoked or invalid!");
-        }
-
-        log.info("Token: " + request.getHeader("x-auth-token"));
+        validate(request, response);
     }
 
     @PatchMapping(value = "/auth/istio/**")
     public void istioPatch(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: PATCH");
+        validate(request, response);
+    }
 
-        if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("sessionId"))) {
-            response.setHeader("x-auth-token", request.getHeader("x-auth-token"));
+    @PostMapping(value = "/auth/istio/**")
+    public void istioPost(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Method: POST");
+        validate(request, response);
+    }
+
+    private void validate(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("Header x-auth-token " + request.getHeader("x-auth-token"));
+        log.info("Header x-auth-session " + request.getHeader("x-auth-session"));
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            log.info(key + " " + value);
+        }
+
+        if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("x-auth-session"))) {
             log.info("Token: is active!");
         } else {
             log.info("Token: is revoked or invalid!");
+            throw new UnauthorizedException("Session invalid!");
         }
-
-        log.info("Token: " + request.getHeader("x-auth-token"));
     }
 }
