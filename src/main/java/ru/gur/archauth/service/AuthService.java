@@ -1,13 +1,19 @@
 package ru.gur.archauth.service;
 
-import ru.gur.archauth.web.UserDto;
+import ru.gur.archauth.service.data.LoginData;
+import ru.gur.archauth.web.user.request.LoginRequest;
+import ru.gur.archauth.web.user.request.RegisterRequest;
 
 import java.util.Map;
 import java.util.UUID;
 
 public interface AuthService {
 
-    Map<String, UUID> register(UserDto userDto);
+    Map<String, UUID> register(RegisterRequest registerRequest);
 
-    String login(UserDto userDto);
+    LoginData login(LoginRequest loginRequest);
+
+    void logout(String sessionId);
+
+    Boolean validateToken(String token, String sessionId);
 }
