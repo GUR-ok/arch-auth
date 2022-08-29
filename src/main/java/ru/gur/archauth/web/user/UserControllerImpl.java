@@ -84,6 +84,13 @@ public class UserControllerImpl implements UserController {
 
         if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("x-auth-session"))) {
             log.info("Token: is active!");
+            //Фильтр добавляет хедер, который потом передается в микросервисы. Хедер д.б. разрешен в EnvoyFilter
+            //            authorization_response:
+            //              allowed_upstream_headers:
+            //                  patterns:
+            //                    - exact: "x-auth-token"
+            //                    - exact: "x-custom"
+            response.setHeader("x-custom", "test");
         } else {
             log.info("Token: is revoked or invalid!");
             throw new UnauthorizedException("Session invalid!");

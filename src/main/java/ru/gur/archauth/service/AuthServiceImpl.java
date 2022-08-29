@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+import ru.gur.archauth.crypt.CryptUtils;
 import ru.gur.archauth.entity.Person;
 import ru.gur.archauth.entity.Session;
 import ru.gur.archauth.exception.InvalidPasswordException;
@@ -39,8 +40,8 @@ public class AuthServiceImpl implements AuthService {
     @Value("${interaction.profiles.uri}")
     private URI profilesUri;
 
-    @Value("${jwt.secret}")
-    private String secret;
+//    @Value("${jwt.secret}")
+//    private String secret;
 
     @Override
     @Transactional
@@ -55,8 +56,7 @@ public class AuthServiceImpl implements AuthService {
         final Person person = Person.builder()
                 .email(registerRequest.getEmail())
                 .login(registerRequest.getLogin())
-                //todo: pswd must be encrypted
-                .password(registerRequest.getPassword())
+                .password(CryptUtils.hash(registerRequest.getPassword()))
                 .build();
 
         final RequestEntity<String> requestEntity = RequestEntity.post(profilesUri + "/profiles").body(registerRequest.getEmail());
@@ -78,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
         final Person person = personRepository.findByLogin(loginRequest.getLogin())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!loginRequest.getPassword().equals(person.getPassword()))
+        if (!CryptUtils.verifyAndUpdateHash(loginRequest.getPassword(), person.getPassword()))
             throw new InvalidPasswordException("Password invalid");
 
         String token = Jwts.builder()
