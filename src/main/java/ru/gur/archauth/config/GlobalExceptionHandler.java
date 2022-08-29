@@ -16,16 +16,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserExistsException.class)
     public ResponseEntity<?> handleUserExistsException(UserExistsException exception, WebRequest request) {
+        log.error(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<?> handleInvalidPasswordException(InvalidPasswordException exception, WebRequest request) {
+        log.error(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException(Exception exception, WebRequest request) {
+        log.error(exception.getMessage());
         if (exception instanceof UserNotFoundException) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }

@@ -1,4 +1,4 @@
-package ru.gur.archauth.web;
+package ru.gur.archauth.web.jwks;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import org.springframework.beans.factory.annotation.Autowired;

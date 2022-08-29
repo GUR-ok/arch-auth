@@ -30,11 +30,15 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-validation',
             'io.jsonwebtoken:jjwt:0.9.1',
             'com.nimbusds:nimbus-jose-jwt:7.3',
+            'org.springdoc:springdoc-openapi-ui:1.6.4',
+            'org.mindrot:jbcrypt:0.4',
 
             //Persistence
             'org.springframework.boot:spring-boot-starter-data-jpa',
             'org.postgresql:postgresql',
-            'org.liquibase:liquibase-core:3.10.2'
+            'org.liquibase:liquibase-core:3.10.2',
+            'org.springframework.boot:spring-boot-starter-data-redis',
+            'redis.clients:jedis:3.6.0'
     )
     runtimeOnly('com.h2database:h2', 'io.micrometer:micrometer-registry-prometheus')
     compileOnly 'org.projectlombok:lombok'
