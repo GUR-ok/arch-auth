@@ -25,6 +25,9 @@ spring:
     name: arch-auth
   main:
     banner-mode: off
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
 
   jpa:
     hibernate:
@@ -44,7 +47,7 @@ spring:
     enabled: true
 
   redis:
-    host: redis
+    host: ${REDIS_SERVER:redis}
     port: 6379
     password: ${REDIS_PASSWORD:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81}
 
@@ -52,7 +55,7 @@ logging:
   level:
     root: INFO
     org.springframework: INFO
-    ru.gur.arch: INFO
+    ru.gur.archauth: INFO
 
 jwt:
   secret: ${JWT_SECRET:default}

@@ -1,0 +1,3 @@
+redis:
+  name: redis
+  port: 6379
