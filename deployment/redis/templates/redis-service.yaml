@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.redis.name }}
+  namespace: arch-gur
+  labels:
+    app: {{ .Values.redis.name }}
+spec:
+  ports:
+    - port: {{ .Values.redis.port }}
+      targetPort: 6379
+  clusterIP: None
+  selector:
+    app: {{ .Values.redis.name }}

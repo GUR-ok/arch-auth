@@ -6,26 +6,24 @@ secret:
   name: arch-auth-secret
 deployment:
   app:
-    type: NodePort
     image: gurok/arch_auth
     port: 8000
     replicas: 1
     jwtsecret: secret
   db:
-    type: NodePort
     image: postgres:latest
     port: 5432
     replicas: 1
 service:
   app:
     name: arch-auth-service
-    type: NodePort
+    type: ClusterIP
     protocol: TCP
     port: 9000
   db:
     name: postgresql-auth-service
     host: "postgresql-auth-service"
-    type: NodePort
+    type: ClusterIP
     port: 5432
     sport: "5432"
     dbname: arch_auth_db

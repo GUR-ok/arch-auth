@@ -42,4 +42,4 @@ logging:
   level:
     root: INFO
     org.springframework: INFO
-    ru.gur.arch: DEBUG
+    ru.gur.archauth: DEBUG
