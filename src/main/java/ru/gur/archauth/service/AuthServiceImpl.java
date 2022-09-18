@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public LoginData login(LoginRequest loginRequest) {
         final Person person = personRepository.findByLogin(loginRequest.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!CryptUtils.verifyAndUpdateHash(loginRequest.getPassword(), person.getPassword()))
             throw new InvalidPasswordException("Password invalid");
@@ -90,12 +90,10 @@ public class AuthServiceImpl implements AuthService {
                 .setExpiration(new Date(System.currentTimeMillis() + 600000))
                 .compact();
 
-        final String session = UUID.randomUUID().toString().replaceAll("-", "");
-        redisRepository.save(new Session(session, token, 36000L));
+        redisRepository.save(new Session(token, 36000L));
 
         return LoginData.builder()
                 .token(token)
-                .session(session)
                 .build();
     }
 
@@ -107,11 +105,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Boolean validateToken(final String token, final String session) {
-        Assert.hasText(session, "session must not be blank");
+    public Boolean validateToken(final String token) {
         Assert.hasText(token, "token must not be blank");
 
-        return redisRepository.findById(session)
+        return redisRepository.findById(token)
                 .map(Session::getJwt)
                 .map(x -> Objects.equals(x, token))
                 .orElse(false);

@@ -41,7 +41,7 @@ public class UserControllerImpl implements UserController {
         response.setHeader("x-auth-token", loginData.getToken());
         response.setHeader("x-username", loginRequest.getLogin());
 
-        return Map.of("token", loginData.getToken(), "session", loginData.getSession());
+        return Map.of("token", loginData.getToken());
     }
 
     @PostMapping(value = "/logout")
@@ -74,7 +74,7 @@ public class UserControllerImpl implements UserController {
 
     private void validate(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("Header x-auth-token " + request.getHeader("x-auth-token"));
-        log.info("Header x-auth-session " + request.getHeader("x-auth-session"));
+
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String key = (String) headerNames.nextElement();
@@ -82,7 +82,7 @@ public class UserControllerImpl implements UserController {
             log.info(key + " " + value);
         }
 
-        if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("x-auth-session"))) {
+        if (authService.validateToken(request.getHeader("x-auth-token"))) {
             log.info("Token: is active!");
             //Фильтр добавляет хедер, который потом передается в микросервисы. Хедер д.б. разрешен в EnvoyFilter
             //            authorization_response:

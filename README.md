@@ -2,8 +2,8 @@
 
 Сборка и установка в minikube
 1) `gradle build`
-2) `docker build -t gurok/arch_auth_2 .`
-3) `docker push gurok/arch_auth_2`
+2) `docker build -t gurok/arch_auth:project .`
+3) `docker push gurok/arch_auth:project`
 4) `kubectl create namespace arch-gur`
 5) `helm install arch-auth ./deployment/app/`
    `kubectl get pods -n arch-gur`
