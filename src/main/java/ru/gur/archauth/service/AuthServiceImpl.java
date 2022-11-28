@@ -26,6 +26,7 @@ import java.security.KeyPair;
 import java.sql.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,6 +40,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${interaction.profiles.uri}")
     private URI profilesUri;
+    @Value("${app.ttl:60000}")
+    private Long ttl;
 
 //    @Value("${jwt.secret}")
 //    private String secret;
@@ -87,10 +90,10 @@ public class AuthServiceImpl implements AuthService {
                 .claim("kid", "gur-id")
                 .claim("profileId", person.getProfileId())
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
-                .setExpiration(new Date(System.currentTimeMillis() + 600000))
+                .setExpiration(new Date(System.currentTimeMillis() + 120000)) //120 sec
                 .compact();
 
-        redisRepository.save(new Session(token, 36000L));
+        redisRepository.save(new Session(token, ttl));
 
         return LoginData.builder()
                 .token(token)
@@ -108,9 +111,19 @@ public class AuthServiceImpl implements AuthService {
     public Boolean validateToken(final String token) {
         Assert.hasText(token, "token must not be blank");
 
-        return redisRepository.findById(token)
+        final Optional<Session> optionalSession = redisRepository.findById(token);
+        final Boolean isValid = optionalSession
                 .map(Session::getJwt)
                 .map(x -> Objects.equals(x, token))
                 .orElse(false);
+
+        //Refresh session
+        if (isValid) {
+            optionalSession.ifPresent(os -> {
+                os.setTimeout(ttl);
+                redisRepository.save(os);
+            });
+        }
+        return isValid;
     }
 }

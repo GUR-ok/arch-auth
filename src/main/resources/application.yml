@@ -63,3 +63,6 @@ jwt:
 interaction:
   profiles:
     uri: ${PROFILES_URI:http://arch-profiles-service.arch-gur.svc.cluster.local:9000}
+
+app:
+  ttl: 60
