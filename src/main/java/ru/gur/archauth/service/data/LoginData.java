@@ -8,6 +8,4 @@ import lombok.Value;
 public class LoginData {
 
     String token;
-
-    String session;
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.gur.archauth.exception.UnauthorizedException;
 import ru.gur.archauth.service.AuthService;
 import ru.gur.archauth.service.data.LoginData;
+import ru.gur.archauth.utils.TokenUtils;
 import ru.gur.archauth.web.user.request.LoginRequest;
 import ru.gur.archauth.web.user.request.RegisterRequest;
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -41,7 +43,7 @@ public class UserControllerImpl implements UserController {
         response.setHeader("x-auth-token", loginData.getToken());
         response.setHeader("x-username", loginRequest.getLogin());
 
-        return Map.of("token", loginData.getToken(), "session", loginData.getSession());
+        return Map.of("token", loginData.getToken());
     }
 
     @PostMapping(value = "/logout")
@@ -74,7 +76,7 @@ public class UserControllerImpl implements UserController {
 
     private void validate(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("Header x-auth-token " + request.getHeader("x-auth-token"));
-        log.info("Header x-auth-session " + request.getHeader("x-auth-session"));
+
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String key = (String) headerNames.nextElement();
@@ -82,15 +84,16 @@ public class UserControllerImpl implements UserController {
             log.info(key + " " + value);
         }
 
-        if (authService.validateToken(request.getHeader("x-auth-token"), request.getHeader("x-auth-session"))) {
+        if (authService.validateToken(request.getHeader("x-auth-token"))) {
             log.info("Token: is active!");
+            final UUID profileId = TokenUtils.getProfileIdFromOriginalToken(request.getHeader("x-auth-token"));
             //Фильтр добавляет хедер, который потом передается в микросервисы. Хедер д.б. разрешен в EnvoyFilter
             //            authorization_response:
             //              allowed_upstream_headers:
             //                  patterns:
             //                    - exact: "x-auth-token"
             //                    - exact: "x-custom"
-            response.setHeader("x-custom", "test");
+            response.setHeader("x-custom", Optional.ofNullable(profileId).map(UUID::toString).orElse(null));
         } else {
             log.info("Token: is revoked or invalid!");
             throw new UnauthorizedException("Session invalid!");
