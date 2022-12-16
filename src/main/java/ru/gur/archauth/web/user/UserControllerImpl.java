@@ -1,5 +1,6 @@
 package ru.gur.archauth.web.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ public class UserControllerImpl implements UserController {
     private final AuthService authService;
 
     @PostMapping(value = "/register")
+    @Operation(summary = "Зарегистрировать нового пользователя")
     public Map<String, UUID> register(@Valid @RequestBody RegisterRequest registerRequest) {
         Map<String, UUID> ids = authService.register(registerRequest);
 
@@ -37,6 +39,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping(value = "/login")
+    @Operation(summary = "Вход в систему")
     public Map<String, String> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         LoginData loginData = authService.login(loginRequest);
 
@@ -47,6 +50,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping(value = "/logout")
+    @Operation(summary = "Выйти из системы")
     public void logout(HttpServletRequest request) {
         authService.logout(request.getHeader("x-auth-session"));
     }
@@ -57,18 +61,21 @@ public class UserControllerImpl implements UserController {
      * Тут можно добавить проверку сессии, валидации прихраненного токена и т.д.
      */
     @GetMapping(value = "/auth/istio/**")
+    @Operation(summary = "Фильтр GET запросов")
     public void istio(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET");
         validate(request, response);
     }
 
     @PatchMapping(value = "/auth/istio/**")
+    @Operation(summary = "Фильтр PATCH запросов")
     public void istioPatch(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: PATCH");
         validate(request, response);
     }
 
     @PostMapping(value = "/auth/istio/**")
+    @Operation(summary = "Фильтр POST запросов")
     public void istioPost(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: POST");
         validate(request, response);
