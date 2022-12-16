@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${interaction.profiles.uri}")
     private URI profilesUri;
-    @Value("${app.ttl:60000}")
+    @Value("${app.ttl:120000}") //120 sec
     private Long ttl;
 
 //    @Value("${jwt.secret}")
@@ -90,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
                 .claim("kid", "gur-id")
                 .claim("profileId", person.getProfileId())
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
-                .setExpiration(new Date(System.currentTimeMillis() + 120000)) //120 sec
+                .setExpiration(new Date(System.currentTimeMillis() + 300000)) //300 sec
                 .compact();
 
         redisRepository.save(new Session(token, ttl));
