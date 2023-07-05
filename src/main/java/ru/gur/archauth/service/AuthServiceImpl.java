@@ -62,10 +62,10 @@ public class AuthServiceImpl implements AuthService {
                 .password(CryptUtils.hash(registerRequest.getPassword()))
                 .build();
 
-        final RequestEntity<String> requestEntity = RequestEntity.post(profilesUri + "/profiles").body(registerRequest.getEmail());
-
-        final UUID profileUUID = restTemplate.exchange(requestEntity, UUID.class).getBody();
-//        final UUID profileUUID = UUID.randomUUID();
+//        final RequestEntity<String> requestEntity = RequestEntity.post(profilesUri + "/profiles").body(registerRequest.getEmail());
+//
+//        final UUID profileUUID = restTemplate.exchange(requestEntity, UUID.class).getBody();
+        final UUID profileUUID = UUID.randomUUID();
 
         person.setProfileId(profileUUID);
 
@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
                 .setExpiration(new Date(System.currentTimeMillis() + 300000)) //300 sec
                 .compact();
 
-        redisRepository.save(new Session(token, ttl));
+//        redisRepository.save(new Session(token, ttl));
 
         return LoginData.builder()
                 .token(token)

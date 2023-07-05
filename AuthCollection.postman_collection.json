@@ -1,0 +1,137 @@
+{
+	"info": {
+		"_postman_id": "7bfa1b9e-ac27-4456-91f5-ed0928284257",
+		"name": "AuthCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20534987"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"gur-ok@yandex.ru\",\r\n    \"login\":\"login\",\r\n    \"password\":\"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var token = (jsonData.token);\r",
+							"\r",
+							"pm.collectionVariables.set(\"access_token\", token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"login\",\r\n    \"password\":\"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "WellKnown",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXJjaC1hdXRoLXNlcnZpY2UuYXJjaC1ndXIiLCJzdWIiOiJ1c2VyIiwia2lkIjoiZ3VyLWlkIiwicHJvZmlsZUlkIjoiOTcwYTVhYzItNjczNS00ZTUyLWE4ZGYtNzcxMWJlODc1MDE1IiwiZXhwIjoxNjg4MDU5NjQ3fQ.S0OPfoiJyPNunLzr1pSi9txiIy3kgF2hR8XRBKxo2mDjl_LX7rE9SXRtTqSDFdrbFvRJFEF3CRFXN6XIB3FaqbZPFAM8CyFRaqWdHXo1Mbbavt_QqF9hSpAJfrJ-RQHIb-OMKE2AmajwI7qraICYA7pGIsPPHrJ32wHw54fokgc-GacyUgJfiCf4HUr3SGAIdQ3A_2n3UfKbzO1uWEDdV5O9OYznotS0T1QYcksqyosEpy-QQy-baxuCt2oJR_zTvBQVK5CE0yYEmdbTc2EWeW0QKABvRzdk9wSIqrnv5WlWNK5vQ6-cpP6kBPMzyJ7xeMHntlqDKNx5QWSwYJRTnw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/.well-known/jwks.json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						".well-known",
+						"jwks.json"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}
